@@ -3,6 +3,8 @@
 
 
 GSM GPRS SIM800C Modem-RS232 is built with Quad-Band GSM GPRS engine-SIM800C, works on frequencies 850/900/1800/1900MHz. The Modem is coming with RS232 interface, which allows you connect PC,PLC,SCADA and microcontroller get connected to GSM or GPRS network.
+
+
 If you have any Quiries, Questions or Concerns, please contact support@researchdesignlab.com
 
 For more details: https://researchdesignlab.com/gsm-gprs-sim800c-modem.html
