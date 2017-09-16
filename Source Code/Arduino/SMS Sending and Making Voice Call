@@ -1,0 +1,41 @@
+
+/*
+ * Product Name:
+     GSM GPRS SIM800C Modem- SMS Sending and Making Voice call Code
+ * Copyright
+     (c) Researchdesignlab.com
+ * Description:
+    
+ * Test configuration:
+     MCU:             ATMEGA328
+     Dev.Board:       Arduino uno
+     Oscillator:      16 MHz
+     Software:        Arduino
+
+*/
+
+void setup()
+{
+Serial.begin(9600);
+delay(5000);
+
+}
+
+void loop()
+{
+Serial.println("AT"); //TO CHECK THE MODEM
+delay(1000);
+Serial.println("AT+CMGF=1"); //TO CHANGE THE SMS SENDING MODE
+delay(1000);
+Serial.println("AT+CMGS=\"7735250138\""); //CHANGE TO DESTINATION NUMBER
+delay(1000);
+Serial.print("hi"); //MESSAGE TO BE SENT
+Serial.write(26);
+delay(1000);
+Serial.println("AT"); 
+delay(1000);
+Serial.println("AT+CMGF=1");
+delay(1000);
+Serial.println("AT+CMGS=\"7795250138\""); //TO MAKE VOICE CALL
+delay(1000);
+}
