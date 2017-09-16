@@ -6,3 +6,5 @@ GSM GPRS SIM800C Modem-RS232 is built with Quad-Band GSM GPRS engine-SIM800C, wo
 
 If you have any Quiries, Questions or Concerns, please contact support@researchdesignlab.com
 
+For more details: www.researchdesignlab.com
+
