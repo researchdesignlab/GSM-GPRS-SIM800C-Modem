@@ -1,2 +1,180 @@
-sdgsd
-dfgfd
+/*
+ * Project name:
+     GSM GPRS SIM800C Modem  
+ * Copyright
+     (c) Researchdesignlab.com
+ * Description:
+    
+ * Test configuration:
+     MCU:             ATMEGA328
+     Dev.Board:       Arduino uno
+     Oscillator:      16 MHz
+     Software:        Arduino
+
+*/
+
+
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(2, 3); // RX, TX
+
+char aux_string[30];
+ char S_Num[12];
+ char S_MSG[169];
+ char val,FLAG1=0;
+String buffer1="/code2.php?V1=78&V2=98&V3=67&V4=65&V5=56";
+static long timer;
+unsigned int i=0,h=0;
+char uriTempString[30];
+char link_1[]="v1=";
+int8_t len=4,p,len_call=4, K=0;
+char GPRS_APN[]="Tata Docomo"; //imis internet-idea rcomnet-rcom TATA.DOCOMO.INTERNET
+int8_t answer,val123=0, FLAG=0,kk=0,hht=0,bac=0,CNT=0;
+int x = 0,j=0,ch;
+char SMS[220];
+
+void setup () 
+{
+  pinMode(7, OUTPUT);
+    digitalWrite(7, LOW);
+  Serial.begin(9600);
+  delay(100);
+  mySerial.begin(9600);
+  Serial.println("STARTING...");  
+  power_on();
+  delay(3000);
+
+  sendATcommand("AT+CMGF=1", "OK", 1000);
+  delay(1000);
+
+  delay(1000);
+  Serial.println("GSM IS READY...");
+}
+
+void loop () 
+{
+
+  UPLOAD();   
+}
+     
+
+void UPLOAD()
+{
+  
+          delay(300); 
+           answer = sendATcommand("AT+CIPSTART=\"TCP\",\"kanwalk.eu5.org\",\"80\"", "CONNECT OK", 15000);    // send the SMS number
+          if (answer == 1)
+          {
+           K=10;
+              delay(500);
+             Serial.println("Connected"); 
+             answer = sendATcommand("AT+CIPSEND", ">", 5000);    // send the SMS number
+            if (answer == 1)
+            {  
+              
+          mySerial.print("GET ");
+          mySerial.print(buffer1);
+          mySerial.println(" HTTP/1.1");
+          mySerial.print("Host: ");                                                                                                          
+          mySerial.println("kanwalk.eu5.org");
+          mySerial.println("Connection: close");
+          mySerial.println();
+          mySerial.write(byte(0x1A));
+        
+
+        answer = sendATcommand("", "HTTP/1.1 200 OK", 15000);    // send the SMS number
+            if (answer == 1)
+            {                 
+            Serial.println("Uploaded"); 
+            mySerial.flush();
+            }
+            }
+        }
+}
+
+
+void power_on()
+{
+
+    uint8_t answer=0;
+    
+     start:
+     delay(2000);
+       digitalWrite(7, HIGH);
+     delay(2000);
+       digitalWrite(7, LOW);
+       answer=0;
+       while(answer==0)
+       {
+           
+            answer = sendATcommand("", "Call Ready", 20000);             
+               answer = sendATcommand("AT", "OK", 2000);
+             answer = sendATcommand("AT+IPR=9600", "OK", 2000);
+             if(answer==1)
+             {
+                answer = sendATcommand("AT", "OK", 2000);
+                
+                
+                 if(answer==1)
+                 {
+                   delay(300);
+                  sendATcommand("AT+CMGF=1","OK", 1000);
+            
+                    
+                 }
+             }
+            
+       }
+       
+      
+    sendATcommand("AT+CFUN=1", "OK", 1000);
+    answer = sendATcommand("AT+CSTT=\"airtelgprs.com\",\"\",\"\"", "OK", 5000); // airtelgprs.com
+    delay(1000);
+    sendATcommand("AT+CIFSR", "OK", 15000);
+
+}
+
+int8_t sendATcommand(char* ATcommand, char* expected_answer1, unsigned int timeout){
+
+    uint8_t x=0,  answer=0;
+    char response[200];
+    unsigned long previous;
+
+    memset(response, '\0', 200);    // Initialize the string
+
+    delay(100);
+
+    while( mySerial.available() > 0) mySerial.read();    // Clean the input buffer
+
+    mySerial.println(ATcommand);    // Send the AT command 
+
+
+        x = 0;
+    previous = millis();
+
+    // this loop waits for the answer
+    do{
+        if(mySerial.available() != 0){    
+            response[x] = mySerial.read();
+            Serial.write(response[x]); 
+            x++;
+            // check if the desired answer is in the response of the module
+            if (strstr(response, expected_answer1) != NULL)    
+            {
+                answer = 1;
+            }
+            if(x>180)
+            x=0;
+        }
+        // Waits for the asnwer with time out
+    }
+    while((answer == 0) && ((millis() - previous) < timeout));    
+
+    return answer;
+}
+
+
+
+
+
+
