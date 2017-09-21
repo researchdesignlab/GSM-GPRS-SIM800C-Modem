@@ -36,7 +36,7 @@ char SMS[220];
 void setup () 
 {
   pinMode(7, OUTPUT);
-    digitalWrite(7, LOW);
+  digitalWrite(7, LOW);
   Serial.begin(9600);
   delay(100);
   mySerial.begin(9600);
@@ -61,66 +61,57 @@ void loop ()
 void UPLOAD()
 {
   
-          delay(300); 
-           answer = sendATcommand("AT+CIPSTART=\"TCP\",\"kanwalk.eu5.org\",\"80\"", "CONNECT OK", 15000);    // send the SMS number
-          if (answer == 1)
-          {
-           K=10;
-              delay(500);
-             Serial.println("Connected"); 
-             answer = sendATcommand("AT+CIPSEND", ">", 5000);    // send the SMS number
+     delay(300); 
+     answer = sendATcommand("AT+CIPSTART=\"TCP\",\"kanwalk.eu5.org\",\"80\"", "CONNECT OK", 15000);   
+        if (answer == 1)
+        {
+          K=10;
+          delay(500);
+          Serial.println("Connected"); 
+          answer = sendATcommand("AT+CIPSEND", ">", 5000);    
             if (answer == 1)
             {  
-              
-          mySerial.print("GET ");
-          mySerial.print(buffer1);
-          mySerial.println(" HTTP/1.1");
-          mySerial.print("Host: ");                                                                                                          
-          mySerial.println("kanwalk.eu5.org");
-          mySerial.println("Connection: close");
-          mySerial.println();
-          mySerial.write(byte(0x1A));
-        
-
-        answer = sendATcommand("", "HTTP/1.1 200 OK", 15000);    // send the SMS number
-            if (answer == 1)
-            {                 
-            Serial.println("Uploaded"); 
-            mySerial.flush();
+               mySerial.print("GET ");
+               mySerial.print(buffer1);
+               mySerial.println(" HTTP/1.1");
+               mySerial.print("Host: ");                                                                                                          
+               mySerial.println("kanwalk.eu5.org");
+               mySerial.println("Connection: close");
+               mySerial.println();
+               mySerial.write(byte(0x1A));
+               answer = sendATcommand("", "HTTP/1.1 200 OK", 15000);   
+               if (answer == 1)
+               {                 
+                    Serial.println("Uploaded"); 
+                    mySerial.flush();
+               }
             }
-            }
-        }
+       }
 }
 
 
 void power_on()
 {
 
-    uint8_t answer=0;
-    
+     uint8_t answer=0;
      start:
      delay(2000);
-       digitalWrite(7, HIGH);
+     digitalWrite(7, HIGH);
      delay(2000);
-       digitalWrite(7, LOW);
-       answer=0;
-       while(answer==0)
-       {
-           
-            answer = sendATcommand("", "Call Ready", 20000);             
-               answer = sendATcommand("AT", "OK", 2000);
-             answer = sendATcommand("AT+IPR=9600", "OK", 2000);
-             if(answer==1)
+     digitalWrite(7, LOW);
+     answer=0;
+     while(answer==0)
+     {
+          answer = sendATcommand("", "Call Ready", 20000);             
+          answer = sendATcommand("AT", "OK", 2000);
+          answer = sendATcommand("AT+IPR=9600", "OK", 2000);
+           if(answer==1)
              {
-                answer = sendATcommand("AT", "OK", 2000);
-                
-                
-                 if(answer==1)
+               answer = sendATcommand("AT", "OK", 2000);
+               if(answer==1)
                  {
-                   delay(300);
-                  sendATcommand("AT+CMGF=1","OK", 1000);
-            
-                    
+                    delay(300);
+                    sendATcommand("AT+CMGF=1","OK", 1000);
                  }
              }
             
@@ -136,45 +127,33 @@ void power_on()
 
 int8_t sendATcommand(char* ATcommand, char* expected_answer1, unsigned int timeout){
 
-    uint8_t x=0,  answer=0;
-    char response[200];
-    unsigned long previous;
-
-    memset(response, '\0', 200);    // Initialize the string
-
-    delay(100);
-
-    while( mySerial.available() > 0) mySerial.read();    // Clean the input buffer
-
-    mySerial.println(ATcommand);    // Send the AT command 
-
-
-        x = 0;
-    previous = millis();
-
-    // this loop waits for the answer
-    do{
-        if(mySerial.available() != 0){    
+     uint8_t x=0,  answer=0;
+     char response[200];
+     unsigned long previous;
+     memset(response, '\0', 200);    // Initialize the string
+     delay(100);
+     while( mySerial.available() > 0) mySerial.read();    // Clean the input buffer
+     mySerial.println(ATcommand);    // Send the AT command 
+     x = 0;
+     previous = millis();
+ // this loop waits for the answer
+    do
+    {
+          if(mySerial.available() != 0)
+          {    
             response[x] = mySerial.read();
             Serial.write(response[x]); 
             x++;
             // check if the desired answer is in the response of the module
-            if (strstr(response, expected_answer1) != NULL)    
-            {
-                answer = 1;
-            }
+               if (strstr(response, expected_answer1) != NULL)    
+               {
+                    answer = 1;
+               }
             if(x>180)
             x=0;
         }
         // Waits for the asnwer with time out
     }
-    while((answer == 0) && ((millis() - previous) < timeout));    
-
-    return answer;
+     while((answer == 0) && ((millis() - previous) < timeout));    
+     return answer;
 }
-
-
-
-
-
-
