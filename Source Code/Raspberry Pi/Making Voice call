@@ -1,0 +1,25 @@
+#Simple AT command
+import serial
+import time
+
+ser=serila.Serial('/dev/ttyAMA0', baudrate=115200)
+
+seri.write('AT\r\n')
+x=ser.read()
+print (x)
+-----------------------------------------------------------
+
+## to make a call
+
+import serial
+import time
+
+#
+ser=serila.Serial('/dev/ttyAMA0', baudrate=115200)
+
+ser.flush()
+
+ser.write('ATD**********;\r\n')
+time.sleep(10)
+ser.close
+----------------------------------------------------------
